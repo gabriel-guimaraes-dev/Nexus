@@ -1,0 +1,125 @@
+/* ========================
+    GLOBAL RESET 
+    ensures consistent box sizing across all elements
+    ======================= */
+* {
+    box-sizing: border-box;
+}
+
+/* =========================
+    BASE PAGE STYLES
+    global background and text color 
+    ======================== */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+}
+
+/* ============================
+    HERO SECTION (lading page main block)
+    centered content with vertical alignment 
+    =========================== */
+.hero-description {
+    background-color: var(--bg-secondary);
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: auto;
+    max-width: 1100px;
+    padding: 60px 40px;
+    border-bottom: 1px solid var(--accent-bronze);
+    align-items: center;
+    padding-top: 10px;
+    /* Soft depth effec */
+    box-shadow: 0 0 80px rgba(0,0,0,0.4);
+    /* Subtle vertical gradient for visual depth */
+    background: linear-gradient(
+        180deg,
+        #1A1F29 0%,
+        #151922 100%
+    );
+}
+
+/* spacing between all hero childern */
+.hero-description > * {
+    margin-bottom: 20px;
+}
+
+/* =========================
+    TEXT STYLES (titles & typography)
+    ======================== */
+.titles {
+    color: var(--accent-gold);
+}
+
+/*Main landing title */
+#landing-title{
+    font-size: 3.2em;
+    margin-bottom: 30px;
+}
+
+/* Subtitle below main title */
+#subtitle-landing {
+    font-size: 1.6em;
+    opacity: 0.85;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Question highlight text (emphasis) */
+.question-landing {
+    font-size: 1.5em;
+    font-style: italic;
+    margin-bottom: 30px;
+}
+
+/* List content (features / descriptions) */
+.lists {
+    font-size: 1.2em;
+    text-align: left;
+}
+
+/* ============================
+     CONTENT BLOCKS (chapters / sections)
+     styled containers for grouped content 
+     ===========================*/
+.chapters {
+    background-color: var(--bg-secondary);
+    border: 1px solid #8B6F3D;
+    padding: 10px;
+    /*Elevated card effect */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+/* ==============================
+    PRIMARY BUTTON (reusable ui component)
+    used across pages (cta buttons)
+    ============================= */
+.nexus-btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    white-space: nowrap;
+    background-color: var(--accent-gold);
+    color: black;
+    border-radius: 6px;
+    padding: 14px 28px;
+    text-decoration: none;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: 0.3s ease;
+    margin-top: 40px;
+    cursor: pointer;
+}
+
+/* Hover interaction (lift + color change) */
+.nexus-btn:hover {
+    background-color: var(--accent-bronze);
+    transform: translateY(-2px);
+}

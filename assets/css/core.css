@@ -1,0 +1,125 @@
+/* =======================
+    GLOBAL COLOR SYSTEM (design tokens)
+    Used across all pages for consistency
+    ====================== */
+:root {
+    --bg-main: #0F1115; /* main page background */
+    --bg-secondary: #1A1F29; /* cards / navbar background */
+
+    --text-main: #E6E6E6; /* default text color */
+
+    --accent-gold: #C8A45C; /* primary accent (buttons, highlights) */
+    --accent-bronze: #8B6F3D; /*  secondary accent (hover states) */
+
+    --rarity-commom: #9E9E9E;
+    --rarity-rare: #3A8DFF;
+    --rarity-legendary: #C86BFA;
+}
+
+/* ==========================
+    BASE PAGE STYLES 
+    reset + global background
+    ========================= */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+}
+
+/* =========================
+    NAVBAR (top navigation across all pages)
+    contains logo, links, and user area
+    ======================== */
+.navbar-nexus {
+    background: var(--bg-secondary);
+    backdrop-filter:  blur(4px);
+    border-bottom: 1px solid var(--accent-bronze);
+}
+
+/* Logo sizing */ 
+#img-logo {
+    width: 60px;
+    height: 60px;
+}
+
+/* Main navbar layout container */
+.navbar-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 5px 20px;
+}
+
+/* Right-side user area (login / user info) */
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding-left: 20px;
+    border-left: 1px solid rgba(200, 164, 92, 0.3);
+    min-width: 200px;
+    justify-content: flex-end;
+}
+
+/* Navigation links (landings / store / inventory) */
+.nav-links {
+    display: flex;
+    gap: 40px;
+}
+
+.nav-links > a {
+    text-decoration: none;
+    font-size: 1.8em;
+    color: var(--accent-gold);
+    display: inline-block;
+    transition: 0.3s ease;
+}
+
+/* Hover animation (slight lift effect */
+.nav-links > a:hover {
+    color: var(--accent-bronze);
+    transform: translateY(-4px);
+}
+
+/* Login/register button (also reused for user ui later) */
+.login-btn {
+    display: inline-flex;
+    justify-content: center;
+    background-color: var(--accent-gold);
+    color: black;
+    border-radius: 6px;
+    padding: 10px 18px;
+    font-size: 0.9em;
+    font-weight: 600;
+    transition: 0.3s ease;
+    cursor: pointer;
+}
+
+/* Hover feedback */
+.login-btn:hover {
+    background-color: var(--accent-bronze);
+    transform: translateY(-2px);
+}
+
+
+/* ====================
+    ITEM CARD  (store & inventory)
+    represents a single item block
+    =================== */
+.item-card {
+    background: #151922;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid rgba(200, 164, 92, 0.2);
+    transition: 0.3s ease;
+}
+
+/* Hover interaction (lift + highlight) */
+.item-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent-gold);
+}
+
