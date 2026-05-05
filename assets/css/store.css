@@ -1,0 +1,92 @@
+/* =========================
+    PAGE STYLES
+    global background and text color 
+    ======================== */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+}
+
+/* =========================
+    STORE CONTAINER (outer wrapper)
+    provides spacing around the store layout
+    ======================== */
+.store-container {
+    background: var(--bg-main);
+    padding: 40px 20px;
+}
+
+/* ===========================
+    STORE LAYOUT (main grid structure)
+    left = filters menu
+    right = items grid
+    ========================== */ 
+.store-layout {
+    display: grid;
+    grid-template-columns: 250px 1fr; /* Sidebar + content */
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: var(--bg-secondary);
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/* ===========================
+    STORE MENU (filters sidebar)
+    contains filtering options (category, rarity, etc)
+    ========================== */
+.store-menu {
+   display: flex;
+   flex-direction: column;
+   gap: 20px;
+   background: var(--bg-secondary);
+   padding: 16px;
+   border-radius: 10px;
+   border: 1px solid var(--accent-gold);
+   /* Highlight border */
+    border-color: var(--accent-gold);
+}
+
+/* ================================
+    FILTER GROUP (label + select input)
+    groups each filter control
+    =============================== */
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Dropdown styling */
+.filter-group select {
+    font-size: 1em;
+    height: 35px;
+    border-radius: 8px;
+}
+
+/* Option styling (inside select) */
+.filter-group option {
+    font-size: 1em;
+    height: 35px;
+}
+
+/* Filter label stylng */
+.filter-group label {
+    color: var(--accent-gold);
+    font-size: 1.3em;
+}
+
+/* ====================
+    STORE GRID (items container)
+    responsive grid for item cards
+    =================== */
+.store-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+
