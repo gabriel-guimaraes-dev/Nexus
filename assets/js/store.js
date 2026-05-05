@@ -1,4 +1,6 @@
 function main () {
+
+    
     
     class Item {
         constructor (name, power, gold, image, type, rarity, specification) {
@@ -13,7 +15,7 @@ function main () {
 
         getItem () {
             const card = document.createElement('div');
-            card.className = 'item-card';
+            card.className = `item-card ${this.specification}`;
             card.style.backgroundImage = `url('${this.image}')`;
 
             card.innerHTML = `
@@ -29,28 +31,28 @@ function main () {
     }
 
     const itemList = [
-        new Item ("freeze sword", 25, 65, "/assets/images/itens/swords/freeze_sword_default.png", "weapon", "common", "sword"),
-        new Item ("rare freeze sword", 40, 100, "/assets/images/itens/swords/freeze_sword_rare.png", "weapon", "rare", "sword"),
-        new Item ("legendary freeze sword", 65, 150, "/assets/images/itens/swords/freeze_sword_legendary.png", "weapon", "legendary", "sword"),
-        new Item ("rare poison sword", 35, 85, "/assets/images/itens/swords/poison_sword_rare.png", "weapon", "rare", "sword"),
-        new Item ("legendary poison sword", 60, 120, "/assets/images/itens/swords/poison_sword_legendary.png", "weapon", "legendary", "sword"),
-        new Item ("thunder spear", 45, 132, "/assets/images/itens/spears/thunder_spear_default.png", "weapon", "common", "spear"),
-        new Item ("rare thunder spear", 65, 160, "/assets/images/itens/spears/thunder_spear_rare.png", "weapon", "rare", "spear"),
-        new Item ("legendary thunder spear", 45, 132, "/assets/images/itens/spears/thunder_spear_legendary.png", "weapon", "legendary", "spear"),
-        new Item ("fire daggers", 25, 80, "/assets/images/itens/daggers/fire_dagger_default.png", "weapon", "common", "dagger"),
-        new Item ("rare fire daggers", 35, 95, "/assets/images/itens/daggers/fire_dagger_rare.png", "weapon", "rare", "dagger"),
-        new Item ("legendary fire daggers", 50, 100, "/assets/images/itens/daggers/fire_dagger_legendary.png", "weapon", "legendary", "dagger"),
-        new Item ("poison bow", 35, 70, "/assets/images/itens/bows/poison_bow_default.png", "weapon", "common", "bow"),
-        new Item ("rare poison bow", 40, 75, "/assets/images/itens/bows/poison_bow_rare.png", "weapon", "rare", "bow"),
-        new Item ("legendary poison bow", 50, 100, "/assets/images/itens/bows/poison_bow_legendary.png", "weapon", "legendary", "bow"),
-        new Item ("rare thunder bow", 40, 85, "/assets/images/itens/bows/thunder_bow_rare.png", "weapon", "rare", "bow"),
-        new Item ("legendary thunder bow", 50, 110, "/assets/images/itens/bows/thunder_bow_legendary.png", "weapon", "legendary", "bow"),
-        new Item ("shield", 50, 185, "/assets/images/itens/shield/shield_default.png", "weapon", "common", "shield"),
-        new Item ("rare shield", 80, 350, "/assets/images/itens/shield/shield_rare.png", "weapon", "rare", "shield"),
-        new Item ("legendary shield", 200, 1800, "/assets/images/itens/shield/shield_legendary.png", "weapon", "legendary", "shield"),
-        new Item ("leggings", 50, 300, "/assets/images/itens/armor/legs/legs_default.png", "armor", "common", "legging"),
-        new Item ("rare leggings", 55, 320, "/assets/images/itens/armor/legs/legs_rare.png", "armor", "rare", "legging"),
-        new Item ("legendary leggings", 550, 750, "/assets/images/itens/armor/legs/legs_legendary.png", "armor", "legendary", "legging"),
+        new Item ("ice sword", 25, 65, "/assets/images/itens/swords/freeze_sword_default.png", "weapons", "common", "sword"),
+        new Item ("rare ice sword", 40, 100, "/assets/images/itens/swords/freeze_sword_rare.png", "weapons", "rare", "sword"),
+        new Item ("legendary ice sword", 65, 150, "/assets/images/itens/swords/freeze_sword_legendary.png", "weapons", "legendary", "sword"),
+        new Item ("rare poison sword", 35, 85, "/assets/images/itens/swords/poison_sword_rare.png", "weapons", "rare", "sword"),
+        new Item ("legendary poison sword", 60, 120, "/assets/images/itens/swords/poison_sword_legendary.png", "weapons", "legendary", "sword"),
+        new Item ("thunder spear", 45, 132, "/assets/images/itens/spears/thunder_spear_default.png", "weapons", "common", "spear"),
+        new Item ("rare thunder spear", 65, 160, "/assets/images/itens/spears/thunder_spear_rare.png", "weapons", "rare", "spear"),
+        new Item ("legendary thunder spear", 45, 132, "/assets/images/itens/spears/thunder_spear_legendary.png", "weapons", "legendary", "spear"),
+        new Item ("fire daggers", 25, 80, "/assets/images/itens/daggers/fire_dagger_default.png", "weapons", "common", "dagger"),
+        new Item ("rare fire daggers", 35, 95, "/assets/images/itens/daggers/fire_dagger_rare.png", "weapons", "rare", "dagger"),
+        new Item ("legendary fire daggers", 50, 100, "/assets/images/itens/daggers/fire_dagger_legendary.png", "weapons", "legendary", "dagger"),
+        new Item ("poison bow", 35, 70, "/assets/images/itens/bows/poison_bow_default.png", "weapons", "common", "bow"),
+        new Item ("rare poison bow", 40, 75, "/assets/images/itens/bows/poison_bow_rare.png", "weapons", "rare", "bow"),
+        new Item ("legendary poison bow", 50, 100, "/assets/images/itens/bows/poison_bow_legendary.png", "weapons", "legendary", "bow"),
+        new Item ("rare thunder bow", 40, 85, "/assets/images/itens/bows/thunder_bow_rare.png", "weapons", "rare", "bow"),
+        new Item ("legendary thunder bow", 50, 110, "/assets/images/itens/bows/thunder_bow_legendary.png", "weapons", "legendary", "bow"),
+        new Item ("shield", 50, 185, "/assets/images/itens/shield/shield_default.png", "armor", "common", "shield"),
+        new Item ("rare shield", 80, 350, "/assets/images/itens/shield/shield_rare.png", "armor", "rare", "shield"),
+        new Item ("legendary shield", 200, 1800, "/assets/images/itens/shield/shield_legendary.png", "armor", "legendary", "shield"),
+        new Item ("leggings", 50, 300, "/assets/images/itens/armor/legs/legs_default.png", "armor", "common", "leggings"),
+        new Item ("rare leggings", 55, 320, "/assets/images/itens/armor/legs/legs_rare.png", "armor", "rare", "leggings"),
+        new Item ("legendary leggings", 550, 750, "/assets/images/itens/armor/legs/legs_legendary.png", "armor", "legendary", "leggings"),
         new Item ("helmet", 150, 250, "/assets/images/itens/armor/helmet/helmet_default.png", "armor", "common", "helmet"),
         new Item ("rare helmet", 200, 350, "/assets/images/itens/armor/helmet/helmet_rare.png", "armor", "rare", "helmet"),
         new Item ("legendary helmet", 400, 800, "/assets/images/itens/armor/helmet/helmet_legendary.png", "armor", "legendary", "helmet"),
@@ -63,11 +65,78 @@ function main () {
     ];
 
     const container = document.querySelector('.store-grid');
+    let currentPage = 1;
+    const itemsPerPage = 6;
+    let filteredItems = itemList;
+    
 
-    itemList.forEach(item => {
-        container.appendChild(item.getItem());
-    });
+    function renderItems (items) {
+        container.innerHTML = '';
 
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const paginatedItems = items.slice(start, end);
+
+        paginatedItems.forEach(item => {
+            container.appendChild(item.getItem());
+        });
+        renderPagination(items);        
+    }
+
+    function renderPagination(items) {
+        const paginationContainer = document.querySelector('.pagination');
+        paginationContainer.innerHTML = '';
+
+        const totalPages = Math.ceil(items.length / itemsPerPage);
+
+        for (let i = 1; i <= totalPages; i++) {
+            const button = document.createElement('button');
+            button.textContent = i;
+            button.classList.add('page-btn');
+
+            if(i === currentPage) {
+                button.classList.add('active-page');
+            }
+
+            button.addEventListener('click', () => {
+                currentPage = i;
+                renderItems(filteredItems);
+            });
+
+            paginationContainer.appendChild(button);
+        }
+    }
+
+    renderItems(itemList);
+
+    const filterSelect = document.querySelector('#filters');
+    const raritySelect = document.querySelector('#rarity');
+    const typeSelect = document.querySelector('#item-type');
+
+    function applyFilters () {
+        const selectedFilter = filterSelect.value;
+        const selectedRarity = raritySelect.value;
+        const selectedType = typeSelect.value;
+
+        const filteredItems = itemList.filter(item => {
+            const matchesFilter = 
+                selectedFilter === 'all' || item.type === selectedFilter;
+
+            const matchesRarity = 
+                selectedRarity === 'all' || item.rarity === selectedRarity;
+            
+            const matchesType = 
+                selectedType === 'all' || item.specification === selectedType;
+
+            return matchesFilter && matchesRarity && matchesType;
+        });
+        currentPage = 1;
+        renderItems(filteredItems);
+    }
+
+    filterSelect.addEventListener('change', applyFilters);
+    raritySelect.addEventListener('change', applyFilters);
+    typeSelect.addEventListener('change', applyFilters);
 
 }
 main();

@@ -179,10 +179,40 @@ body {
     gap: 20px;
     font-size: 1.1rem;
     font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.4);
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.sword,
+.spear,
+.bow,
+.dagger {
+    background-size: 75%;
+}
+
+.shield {
+    background-size: 65%;
+}
+.helmet {
+    background-size: 50%;
+}
+
+.leggings {
+    background-size: 50%;
+}
+
+.chest {
+    background-size: 50%;
+}
+
+.arms {
+    background-size: 50%;
 }
 
 .stat-power {
-    color: #ff5a5a; /* color for the power */
+    color: #e72020; /* color for the power */
 }
 
 .stat-gold {
@@ -220,5 +250,35 @@ body {
 
 .buy-btn:active  {
     transform: translateX(-50%) scale(0.98);
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin-top: 30px;
+
+}
+
+.page-btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+
+    background: var(--bg-secondary);
+    color: var(--accent-gold);
+    font-weight: bold;
+}
+
+.active-page {
+    background: var(--accent-gold);
+    color: black;
+}
+
+.page-btn:hover {
+    transform: translateY(-2px);
 }
 
