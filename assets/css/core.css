@@ -68,6 +68,7 @@ body {
 .nav-links {
     display: flex;
     gap: 40px;
+    margin-left: 300px;
 }
 
 .nav-links > a {
@@ -82,6 +83,25 @@ body {
 .nav-links > a:hover {
     color: var(--accent-bronze);
     transform: translateY(-4px);
+}
+
+.cart {
+    margin-left: auto;
+    margin-right: 20px;
+}
+
+/* Shopping cart icon styling */
+.cart i {
+    font-size: 28px;
+    color: var(--accent-gold);
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+/* Hover animation (slight size effect) */
+.cart i:hover {
+    color: var(--accent-bronze);
+    transform: scale(1.1);
 }
 
 /* Login/register button (also reused for user ui later) */
@@ -110,16 +130,95 @@ body {
     represents a single item block
     =================== */
 .item-card {
-    background: #151922;
+    background: var(--accent-gold);
     padding: 20px;
-    border-radius: 8px;
+    border-radius: 12px;
     border: 1px solid rgba(200, 164, 92, 0.2);
     transition: 0.3s ease;
+    width: 250px;
+    height: 320px;
+    
+
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: relative;
 }
 
 /* Hover interaction (lift + highlight) */
 .item-card:hover {
     transform: translateY(-5px);
     border-color: var(--accent-gold);
+}
+
+/* Position and style for the title of the card */
+.card-title {
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    text-align: center;
+    margin: 0;
+    color: var(--bg-main);
+    font-size: 1.3em;
+    line-height: 1.2;
+    font-weight: bold;
+    text-transform: capitalize;
+    word-wrap: break-word;
+}
+
+/* Position and style for the power and gold */
+.card-stats {
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    display: flex;
+    gap: 20px;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.stat-power {
+    color: #ff5a5a; /* color for the power */
+}
+
+.stat-gold {
+    color: #ffd700; /* color for the gold */
+}
+
+/* Style for the button with position a hover stats */
+.buy-btn {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: 80%;
+    padding: 12px;
+
+    border: 2px solid #8b6b1f;
+    border-radius: 10px;
+
+    background: linear-gradient(135deg, #d4af37, #f5d76e);
+    color: #111;
+
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.buy-btn:hover {
+    transform: translateX(-50%) scale(1.05);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+}
+
+.buy-btn:active  {
+    transform: translateX(-50%) scale(0.98);
 }
 
