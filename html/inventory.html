@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/assets/css/core.css">
+    <link rel="stylesheet" href="/assets/css/inventory.css">
+    <link rel="icon" href="/assets/images/logo/icon.png" type="image/png">
+    <title>Nexus Inventory</title>
+</head>
+<body>
+    <main>
+        <header class="navbar-nexus">
+            <div class="navbar-container">
+                <div class="logo">
+                    <a href="store.html"><img id="img-logo" src="/assets/images/logo/nexus_logo.png" alt="Nexus Icon"></a>
+                </div>
+                <nav class="nav-links">
+                    <a href="index.html">Landing Page</a>
+                    <a href="store.html">Store</a>
+                </nav>
+                <div class="nav-actions" id="user-area">
+                    <button class="login-btn">Login/Register</button>
+                </div>                              
+            </div>
+        </header>   
+
+        <section class="inventory-container">
+            <div class="inventory-layout">
+                <div class="backpack">
+                    <div class="inventory-filters">
+                        <div class="filter">
+                            <label for="filters">Filter:</label>
+                            <select id="filters" name="filter">
+                                <option value="all">All</option>
+                                <option value="weapons">Weapons</option>
+                                <option value="armor">Armor</option>
+                            </select>
+                        
+                            <label for="rarity">Rarity:</label>
+                            <select id="rarity" name="rarity">
+                                <option value="all">All</option>
+                                <option value="common">Common</option>
+                                <option value="rare">Rare</option>
+                                <option value="legendary">Legendary</option>
+                            </select>
+                        
+                            <label for="item-type">Type:</label>
+                            <select id="item-type" name="item-type">
+                                <option value="all">All</option>
+                                <option value="bows">Bows</option>
+                                <option value="swords">Swords</option>
+                                <option value="spears">Spears</option>
+                                <option value="daggers">Daggers</option>
+                                <option value="shields">Shields</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="inventory-grid">
+                        <div class="item-card">
+                            <div>
+                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit aperiam necessitatibus possimus placeat distinctio nesciunt labore ratione architecto porro, natus et exercitationem eaque dolorem corrupti consequatur sapiente cupiditate enim incidunt.
+                                </p>
+
+                            </div>
+                        </div>
+                        <div class="item-card">
+                            <div>
+                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit aperiam necessitatibus possimus placeat distinctio nesciunt labore ratione architecto porro, natus et exercitationem eaque dolorem corrupti consequatur sapiente cupiditate enim incidunt.
+                                </p>
+
+                            </div>
+                        </div>
+                        <div class="item-card">
+                            <div>
+                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit aperiam necessitatibus possimus placeat distinctio nesciunt labore ratione architecto porro, natus et exercitationem eaque dolorem corrupti consequatur sapiente cupiditate enim incidunt.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="equipped-items">
+                    <div class="character-wrapper">
+                        <div class="character-display">
+                            <img src="/assets/images/silhouet/male_silhouet.png" alt="Character">
+                        </div>
+
+                        <div class="equipment-slots">
+                            <div class="slot head">Head</div>
+                            <div class="slot chest">Chest</div>
+                            <div class="slot right-weapon">Weapon</div>
+                            <div class="slot left-weapon">Weapon</div>
+                            <div class="slot legs">Legs</div>
+                            <div class="slot boots">Boots</div>
+                        </div>
+                        
+                        <div class="character-stats">
+                            <h3>Stats</h3>
+                            <p>Power: <span id="power">120</span></p>
+                        </div>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+        </section>
+    </main>
+    
+
+    <script src="/assets/js/inventory.js"></script>
+</body>
+</html>
