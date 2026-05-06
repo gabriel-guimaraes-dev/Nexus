@@ -1,7 +1,5 @@
 function main () {
 
-    
-    
     class Item {
         constructor (name, power, gold, image, type, rarity, specification) {
             this.name = name;
@@ -13,8 +11,11 @@ function main () {
             this.specification = specification;
         }
 
+        
+
         getItem () {
             const card = document.createElement('div');
+            
             card.className = `item-card ${this.specification}`;
             card.style.backgroundImage = `url('${this.image}')`;
 
@@ -26,6 +27,12 @@ function main () {
                 </div>
                 <button class="buy-btn">Add To Cart</button>
             `;
+            const buyBtn = card.querySelector('.buy-btn');
+
+            buyBtn.addEventListener('click', () => {
+                addToCart(this);
+            });
+
             return card;
         }
     }
@@ -68,7 +75,15 @@ function main () {
     let currentPage = 1;
     const itemsPerPage = 6;
     let filteredItems = itemList;
-    
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    function addToCart(item) {
+        cart.push(item);
+
+        localStorage.setItem('cart', JSON.stringify(cart));
+        showToast(`${item.name} added to cart`, 'success');
+    }
+
 
     function renderItems (items) {
         container.innerHTML = '';
@@ -118,7 +133,7 @@ function main () {
         const selectedRarity = raritySelect.value;
         const selectedType = typeSelect.value;
 
-        const filteredItems = itemList.filter(item => {
+        filteredItems = itemList.filter(item => {
             const matchesFilter = 
                 selectedFilter === 'all' || item.type === selectedFilter;
 
@@ -138,5 +153,156 @@ function main () {
     raritySelect.addEventListener('change', applyFilters);
     typeSelect.addEventListener('change', applyFilters);
 
+    const modal = document.querySelector('#auth-modal');
+    const loginBtn = document.querySelector('.login-btn');
+    const closeModal = document.querySelector('#close-modal');
+    const submitBtn = document.querySelector('#auth-submit');
+    const usernameInput = document.querySelector('#username-input');
+    const userArea = document.querySelector('#user-area');
+    const cartIcon = document.querySelector('.cart');
+    const cartModal = document.querySelector('#cart-modal');
+    const closeCart = document.querySelector('#close-cart');
+    const buyCartBtn = document.querySelector('#buy-cart-btn');
+
+    buyCartBtn.addEventListener('click', buyCart);
+    
+
+    if(loginBtn){
+        loginBtn.addEventListener('click', () => {
+            modal.classList.remove('hidden');
+        });
+    }
+
+    function closeAuthModal() {
+        modal.classList.add('hidden');
+        usernameInput.value = '';
+    }
+
+    closeModal.addEventListener('click', closeAuthModal);
+
+    submitBtn.addEventListener('click', () => {
+        const username = usernameInput.value.trim();
+
+        if (!username) return;
+
+        const user = {
+            name: username, 
+            gold: 5000
+        };
+
+        localStorage.setItem('nexusUser', JSON.stringify(user));
+
+        renderUser(user);
+        closeAuthModal();
+    });
+
+    function renderUser(user) {
+        userArea.innerHTML = `
+        <span>${user.name}</span>
+        <span>&#x1F4B0; ${user.gold}G</span>
+        <button id="logout-btn">Logout</button>
+        `;
+        
+        const logoutBtn = document.querySelector('#logout-btn');
+        logoutBtn.addEventListener('click', logoutUser);
+    }
+
+    function logoutUser() {
+        localStorage.removeItem('nexusUser');
+
+        userArea.innerHTML = `
+        <button class="login-btn">Login / Register</button>
+        `;
+
+        const newLoginBtn = document.querySelector('.login-btn');
+        newLoginBtn.addEventListener('click', () => {
+            modal.classList.remove('hidden');
+        });
+    }
+
+    const savedUser = JSON.parse(localStorage.getItem('nexusUser'));
+
+    if(savedUser) {
+        renderUser(savedUser);
+    }
+
+    cartIcon.addEventListener('click', () => {
+        renderCart();
+        cartModal.classList.remove('hidden');
+    });
+
+    closeCart.addEventListener('click', () => {
+        cartModal.classList.add('hidden');
+    });
+
+    function renderCart() {
+        const cartItemsContainer = document.querySelector('#cart-items');
+        const totalContainer = document.querySelector('#cart-total');
+
+        cartItemsContainer.innerHTML = '';
+
+        let total = 0;
+
+        cart.forEach(item => {
+            total += item.gold;
+
+            const itemDiv = document.createElement('div');
+            itemDiv.innerHTML = `
+                <p>${item.name} - ${item.gold}G</p>
+            `;
+
+            cartItemsContainer.appendChild(itemDiv);
+        });
+
+        totalContainer.textContent = `Total: ${total}G`;
+    }
+
+    function buyCart() {
+        const user = JSON.parse(localStorage.getItem('nexusUser'));
+
+        if(cart.length === 0){
+            showToast('Cart is empty', 'error');
+            return;
+        }
+
+        if (!user) {
+            showToast('You need to login first', 'error');
+            return;
+        }
+
+        const total = cart.reduce((sum, item) => sum + item.gold, 0);
+
+        if(user.gold < total) {
+            showToast('Not enough gold', 'erorr');
+            return;
+        }
+
+        user.gold -= total;
+
+        localStorage.setItem('nexusUser', JSON.stringify(user));
+
+        cart = [];
+        localStorage.setItem('cart', JSON.stringify(cart));
+
+        renderUser(user);
+        renderCart();
+
+        cartModal.classList.add('hidden');
+
+        showToast('Purchase successful!', 'success');
+    }
+
+    function showToast(message, type = 'info') {
+        const container = document.querySelector('#toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.textContent = message;
+
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            toast.remove();
+        }, 3000);
+    }
 }
 main();
