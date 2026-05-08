@@ -19,7 +19,7 @@ function renderItems (items) {
     const paginatedItems = items.slice(start, end);
 
     paginatedItems.forEach(item => {
-        container.appendChild(item.getItem(addToCart));
+        container.appendChild(item.getItem(addToCart, true));
     });
     renderPagination(items);        
 }

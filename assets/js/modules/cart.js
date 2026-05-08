@@ -179,7 +179,26 @@ function buyCart() {
 
     user.gold -= total;
 
+    const inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+
+    cart.forEach(cartEntry => {
+        const existingItem = inventory.find(inventoryItem => inventoryItem.item.name === cartEntry.item.name);
+
+        if(existingItem) {
+            existingItem.quantity += cartEntry.quantity;
+        }else {
+            inventory.push(cartEntry);
+        }
+    });
+
+    
+
+    localStorage.setItem('inventory', JSON.stringify(inventory));
     localStorage.setItem('nexusUser', JSON.stringify(user));
+
+    window.location.reload();
+
+    
 
     cart = [];
     localStorage.setItem('cart', JSON.stringify(cart));

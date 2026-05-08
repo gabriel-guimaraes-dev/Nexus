@@ -1,7 +1,7 @@
 // Page initialization
 import { initializeAuth } from './modules/auth.js';
 import { initializeStore } from './modules/store.js';
-//import { initializeInventory } from './modules/inventory.js';
+import { initializeInventory } from './modules/inventory.js';
 
 // initialize user authentication
 initializeAuth();

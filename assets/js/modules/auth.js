@@ -10,6 +10,8 @@ export function initializeAuth() {
     const userArea = document.querySelector('#user-area');
     const savedUser = JSON.parse(localStorage.getItem('nexusUser'));
 
+    if(!modal || !submitBtn || !usernameInput || !userArea) return;
+
     // restore saved user session
     if(savedUser) {
         renderUser(savedUser, userArea, modal);
@@ -25,26 +27,32 @@ export function initializeAuth() {
     setupEscClose(modal, usernameInput);
     
     // create new user session with starter gold
-    submitBtn.addEventListener('click', () => {
-        const username = usernameInput.value.trim();
+    if(submitBtn) {
+        submitBtn.addEventListener('click', () => {
+            const username = usernameInput.value.trim();
 
-        if (!username) return;
+            if (!username) return;
 
-        const user = {
-            name: username, 
-            gold: 5000
-        };
+            const user = {
+                name: username, 
+                gold: 5000
+            };
 
-        localStorage.setItem('nexusUser', JSON.stringify(user));
+            localStorage.setItem('nexusUser', JSON.stringify(user));
 
-        renderUser(user, userArea, modal);
-        closeModal(modal, usernameInput);
-    });  
+            renderUser(user, userArea, modal);
+            closeModal(modal, usernameInput);
+        });  
+    }
 }
 
 // handle user logout
 function logoutUser(userArea, modal) {
     localStorage.removeItem('nexusUser');
+    localStorage.removeItem('inventory');
+    localStorage.removeItem('cart');
+    
+    window.location.reload();
 
     userArea.innerHTML = `
         <button class="login-btn">Login / Register</button>

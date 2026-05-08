@@ -12,7 +12,7 @@ export class Item {
 
     
     // generate item card element
-    getItem (addToCartCallback) {
+    getItem (addToCartCallback, showBuyButton = true) {
         const card = document.createElement('div');
         
         card.className = `item-card ${this.specification} ${this.rarity}`;
@@ -24,13 +24,19 @@ export class Item {
                 <span class="stat-power">&#9876; ${this.power}</span>
                 <span class="stat-gold">&#x1F4B0; ${this.gold}G</span>
             </div>
-            <button class="buy-btn">Add To Cart</button>
         `;
-        const buyBtn = card.querySelector('.buy-btn');
 
-        buyBtn.addEventListener('click', () => {
-            addToCartCallback(this);
-        });
+        if(showBuyButton){
+            const buyBtn = document.createElement('button');
+            buyBtn.classList.add('buy-btn');
+            buyBtn.textContent = 'Add to Cart';
+
+            buyBtn.addEventListener('click', () => {
+                addToCartCallback(this);
+            });
+
+            card.appendChild(buyBtn);
+        }
 
         return card;
     }
