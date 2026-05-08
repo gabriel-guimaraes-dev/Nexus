@@ -21,7 +21,10 @@
                     <a href="inventory.html">Inventory</a>
                 </nav>
                 <div class="cart">
-                    <a><i class="fa-solid fa-cart-shopping"></i></a>
+                    <a>
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span id="cart-count">0</span>
+                    </a>
                 </div>
                 <div class="nav-actions" id="user-area">
                     <button class="login-btn">Login/Register</button>
@@ -91,11 +94,12 @@
                 <div id="cart-items"></div>
                 <h3 id="cart-total">Total: 0G</h3>
                 <button id="buy-cart-btn">Buy Items</button>
+                <button id="clear-cart-btn">Clear Cart</button>
             </div>
         </div>
         <div id="toast-container"></div>
     </main>
 
-    <script src="/assets/js/core.js"></script>
+    <script type="module" src="/assets/js/main.js"></script>
 </body>
 </html>

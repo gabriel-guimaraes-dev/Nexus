@@ -133,12 +133,11 @@ body {
     background: var(--accent-gold);
     padding: 20px;
     border-radius: 12px;
-    border: 1px solid rgba(200, 164, 92, 0.2);
-    transition: 0.3s ease;
+    border: 2px solid rgba(200, 164, 92, 0.2);
+    transition: all 0.3s ease;
     width: 250px;
     height: 320px;
-    
-
+    overflow: hidden;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -149,6 +148,51 @@ body {
 .item-card:hover {
     transform: translateY(-5px);
     border-color: var(--accent-gold);
+}
+
+.common {
+    border-color: var(--rarity-commom);
+    box-shadow: 0 0 8px rgba(158, 158, 158, 0.2);
+}
+
+.rare {
+    border: 2px solid var(--rarity-rare);
+    box-shadow: 
+        0 0 10px rgba(58, 141, 255, 0.5),
+        0 0 20px rgba(58, 141, 255, 0.2);
+}
+
+.rare:hover {
+    box-shadow:
+        0 0 15px rgba (58, 141, 255, 0.8),
+        0 0 30px rgba(58, 141, 255, 0.4);
+}
+
+.legendary {
+    border: 2px solid var(--rarity-legendary);
+    box-shadow:
+        0 0 12px rgba(200, 107, 250, 0.7),
+        0 0 24px rgba(200, 107, 250 ,0.4),
+        inset 0 0 10px rgba(255, 215, 0, 0.15);
+}
+
+.legendary:hover {
+    box-shadow: 
+        0 0 18px rgba(200, 107, 250, 1),
+        0 0 35px rgba(200, 107, 250, 0.6),
+        inset 0 0 12px rgba(255,215,0, 0.25);
+}
+
+.legendary::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    width: 50%;
+    height: 200%;
+    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+    transform: rotate(25deg);
+    animation: shine 3s infinite linear;
 }
 
 /* Position and style for the title of the card */
@@ -303,9 +347,15 @@ body {
 
 .modal-content {
     background: var(--bg-secondary);
+    color: var(--text-main);
     padding: 30px;
-    border-radius: 12px;
-    width: 350px;
+    border-radius: 16px;
+    width: 450px;
+    max-height: 80vh;
+    overflow-y: auto;
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    position: relative;
 
     display: flex;
     flex-direction: column;
@@ -331,9 +381,57 @@ body {
 }
 
 .close-btn {
+    position: absolute;
+    top: 12px;
+    right: 18px;
     align-items: flex-end;
     cursor: pointer;
     font-size: 1.5rem;
+    color: var(--accent-gold);
+}
+
+#buy-cart-btn,
+#clear-cart-btn,
+#auth-submit {
+    width: 100%;
+    margin-top: 12px;
+    padding: 12px;
+
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#clear-cart-btn {
+    background: #c0392b;
+    color: white;
+}
+
+#buy-cart-btn,
+#auth-submit {
+    background: var(--accent-gold);
+    color: black;
+}
+
+#cart-count {
+    position: absolute;
+    top: -8px;
+    right: -10px;
+    background: #c0392b;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cart a {
+    position: relative;
 }
 
 #logout-btn {
@@ -388,6 +486,44 @@ body {
     background: #2980b9;
 }
 
+.cart-item {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
+
+.cart-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.cart-controls button {
+    padding: 6px 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.remove-btn {
+    background: #c0392b;
+    color: white;
+}
+
+.empty-cart {
+    text-align: center;
+    padding: 30px 20px;
+    color: var(--text-main);
+}
+
+.empty-cart h3 {
+    color: var(--accent-gold);
+    margin-bottom: 8px;
+}
+
 @keyframes slideIn {
     from {
         opacity: 0;
@@ -399,4 +535,14 @@ body {
         transform: translateX(0);
     }
 }
+
+@keyframes shine {
+    from {
+        left: -60%;
+    }
+    to {
+        let: 130%;
+    }
+}
+
 
