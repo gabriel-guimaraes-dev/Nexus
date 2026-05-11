@@ -8,13 +8,13 @@ const closeCart = document.querySelector('#close-cart');
 const cartIcon = document.querySelector('.cart');
 const buyCartBtn = document.querySelector('#buy-cart-btn');
 const clearCartBtn = document.querySelector('#clear-cart-btn');
-let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 setupModalOverlay(cartModal);
 setupEscClose(cartModal);
 
 // clear and buy events
 if(clearCartBtn) clearCartBtn.addEventListener('click', clearCart);
+
 if (buyCartBtn) buyCartBtn.addEventListener('click', buyCart);
 
 if(closeCart) {
@@ -34,6 +34,8 @@ function openCart() {
 
 // add the item to the cart and check if it already exist and change the quantity
 export function addToCart(item) {
+    let cart = getCart();
+
     const existingItem = cart.find(cartItem =>
         cartItem.item.name === item.name
     );
@@ -42,13 +44,15 @@ export function addToCart(item) {
         existingItem.quantity++;
     } else {
         cart.push({
-            item: item,
+            item,
             quantity: 1
         });
     }
 
-    localStorage.setItem('cart', JSON.stringify(cart));
+    saveCart(cart);
     updateCartCount();
+
+    localStorage.setItem('cart', JSON.stringify(cart));
 
     if(cartModal && !cartModal.classList.contains('hidden')) {
         renderCart();
@@ -61,6 +65,7 @@ export function addToCart(item) {
 export function renderCart() {
     const cartItemsContainer = document.querySelector('#cart-items');
     const totalContainer = document.querySelector('#cart-total');
+    const cart = getCart();
 
     if(!cartItemsContainer || !totalContainer) return;
 
@@ -116,18 +121,25 @@ export function renderCart() {
 
 // increase the quantity in the cart for each item
 function increaseQuantity (itemName) {
+    let cart = getCart();
+
     const cartItem = cart.find(item => item.item.name === itemName);
 
-    if(cartItem) {
-        cartItem.quantity++;
-    }
+    if(!cartItem) return;
+
+    cartItem.quantity++;
+
+    saveCart(cart);
 
     localStorage.setItem('cart', JSON.stringify(cart));
     renderCart();
+    updateCartCount();
 }
 
 // decrease the quantity in the cart for each item
 function decreaseQuantity(itemName){
+    let cart = getCart();
+
     const cartItem = cart.find(item => item.item.name === itemName);
 
     if(!cartItem) return;
@@ -138,8 +150,11 @@ function decreaseQuantity(itemName){
         cart = cart.filter(item => item.item.name !== itemName);
     }
 
+    saveCart(cart);
+
     localStorage.setItem('cart', JSON.stringify(cart));
     renderCart();
+    updateCartCount();
 }
 
 // remove an item from the cart
@@ -148,6 +163,7 @@ function removeItem(itemName) {
 
     localStorage.setItem('cart', JSON.stringify(cart));
     renderCart();
+    updateCartCount();
 
     showToast('Item removed from cart', 'info');
 }
@@ -157,6 +173,7 @@ function buyCart() {
     const user = JSON.parse(localStorage.getItem('nexusUser'));
     const userArea = document.querySelector('#user-area');
     const modal = document.querySelector('#auth-modal');
+    let cart = getCart();
 
     if(cart.length === 0){
         showToast('Cart is empty', 'error');
@@ -187,21 +204,18 @@ function buyCart() {
         if(existingItem) {
             existingItem.quantity += cartEntry.quantity;
         }else {
-            inventory.push(cartEntry);
+            inventory.push({...cartEntry});
         }
     });
-
-    
 
     localStorage.setItem('inventory', JSON.stringify(inventory));
     localStorage.setItem('nexusUser', JSON.stringify(user));
 
-    window.location.reload();
-
-    
-
     cart = [];
+    saveCart([]);
+
     localStorage.setItem('cart', JSON.stringify(cart));
+
     updateCartCount();
     renderUser(user, userArea, modal);
     renderCart();
@@ -211,6 +225,8 @@ function buyCart() {
     }
 
     showToast('Purchase successful!', 'success');
+    
+    window.location.reload();
 }
 
 // update cart badge counter
@@ -218,6 +234,8 @@ export function updateCartCount() {
     const cartCount = document.querySelector('#cart-count');
 
     if(!cartCount) return;
+
+    const cart = getCart();
 
     const totalItems = cart.reduce((sum, cartItem) => {
         return sum + cartItem.quantity;
@@ -228,6 +246,8 @@ export function updateCartCount() {
 
 // remove all items from the cart
 function clearCart() {
+    let cart = getCart();
+
     cart = [];
 
     localStorage.setItem('cart', JSON.stringify(cart));
@@ -241,4 +261,13 @@ function clearCart() {
 
     showToast('Cart Cleared', 'info');
 }
+
+function getCart() {
+    return JSON.parse(localStorage.getItem('cart')) || [];
+}
+
+function saveCart(updatedCart) {
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
+}
+
 updateCartCount();

@@ -5,6 +5,7 @@ export function showToast(message, type = 'info') {
     if(!container) return;
 
     const toast = document.createElement('div');
+
     toast.className = `toast toast-${type}`;
     toast.textContent = message;
 
@@ -12,7 +13,7 @@ export function showToast(message, type = 'info') {
 
     setTimeout(() => {
         toast.remove();
-    }, 3000);
+    }, 2000);
 }
 
 // open modal

@@ -14,6 +14,7 @@ const itemsPerPage = 6;
 function renderItems (items) {
     container.innerHTML = '';
 
+    // pagination
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
     const paginatedItems = items.slice(start, end);
@@ -74,6 +75,7 @@ function renderPagination(items) {
     }
 }
 
+// apply filters and render items inside the store
 export function initializeStore() {
     if(!container) return;
 

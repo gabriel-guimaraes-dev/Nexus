@@ -1,6 +1,14 @@
 import { Item } from "../data/items.js";
 import { updateCartCount } from "./cart.js";
 
+// DOM manipulation filters
+const filterSelect = document.querySelector('#filters');
+const raritySelect = document.querySelector('#rarity');
+const typeSelect = document.querySelector('#item-type');
+let currentPage = 1;
+const itemsPerPage = 3;
+
+// render inventory items and filters functions
 export function initializeInventory() {
     updateCartCount();
     renderInventory();
@@ -11,13 +19,7 @@ export function initializeInventory() {
     if(typeSelect) typeSelect.addEventListener('change', applyInventoryFilters);
 }
 
-const filterSelect = document.querySelector('#filters');
-const raritySelect = document.querySelector('#rarity');
-const typeSelect = document.querySelector('#item-type');
-
-let currentPage = 1;
-const itemsPerPage = 3;
-
+// render inventory cards with equip button and quantity
 function renderInventory(items = null) {
     const inventoryGrid = document.querySelector('.inventory-grid');
     
@@ -28,7 +30,8 @@ function renderInventory(items = null) {
 
     inventoryGrid.innerHTML = '';
 
-    const start = (currentPage - 1) *itemsPerPage;
+    // pagination and card render
+    const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
     const paginatedItems = inventory.slice(start, end);
 
@@ -68,6 +71,7 @@ function renderInventory(items = null) {
     renderInventoryPagination(inventory);
 }
 
+// inventory filters
 function applyInventoryFilters() {
     const inventory = JSON.parse(localStorage.getItem('inventory')) || [];
     const selectedFilter = filterSelect.value;
@@ -94,6 +98,7 @@ function applyInventoryFilters() {
     renderInventory(filteredInventory);
 }
 
+// pagination controls 
 function renderInventoryPagination(items) {
     const paginationContainer = document.querySelector('.pagination');
 
