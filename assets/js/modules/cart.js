@@ -96,9 +96,15 @@ export function renderCart() {
         itemDiv.classList.add('cart-item');
         
         itemDiv.innerHTML = `
-            <p>${item.name}</p>
-            <p>${item.gold}G x ${quantity}</p>
+            <div class="cart-item-info">
+                <img src="${item.image}" alt="${item.name}" class="cart-item-image">
 
+                <div class="cart-item-details">
+                    <p>${item.name}</p>
+                    <p>${item.gold}G x ${quantity}</p>
+                </div>
+            </div>
+            
             <div class="cart-controls">
                 <button class="decrease-btn">-</button>
                 <span>${quantity}</span>

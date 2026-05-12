@@ -35,7 +35,7 @@ export function initializeAuth() {
 
             const user = {
                 name: username, 
-                gold: 5000
+                gold: 50000
             };
 
             localStorage.setItem('nexusUser', JSON.stringify(user));
@@ -50,6 +50,7 @@ export function initializeAuth() {
 function logoutUser(userArea, modal) {
     localStorage.removeItem('nexusUser');
     localStorage.removeItem('inventory');
+    localStorage.removeItem('equipment');
     localStorage.removeItem('cart');
     
     window.location.reload();

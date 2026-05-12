@@ -96,11 +96,14 @@
     ======================== */
 .slot {
     position: absolute;
-    width: 60px;
-    height: 60px;
+    width: 90px;
+    height: 90px;
     border: 2px solid var(--accent-gold);
-    border-radius: 8px;
-    background: rgba(0, 0, 0, 0.4);
+    border-radius: 12px;
+    background: var(--bg-secondary);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
     backdrop-filter: blur(3px);
 
     display: flex;
@@ -113,40 +116,40 @@
     SLOT POSITIONS (relative to character)
     positioned manually for visual alignment
     ======================== */
-.head {
-    top:10%;
+.slot-head {
+    top:6%;
     left: 20%;
     transform: translateX(-50%);
 }
 
-.chest {
-    top: 10%;
+.slot-chest {
+    top: 6%;
     left: 82%;
-    transform: translateX(-50%);
+    transform: translateX(-40%);
 }
 
-.right-weapon {
-    top:35%;
+.slot-rightWeapon {
+    top:27%;
     left: 20%;
     transform: translateX(-50%);
 }
 
-.left-weapon {
-    top:35%;
+.slot-leftWeapon {
+    top:27%;
     left: 82%;
-    transform: translateX(-50%);
+    transform: translateX(-40%);
 }
 
-.legs {
-    top:60%;
+.slot-legs {
+    top:49%;
     left: 20%;
     transform: translateX(-50%);
 }
 
-.boots {
-    top:60%;
+.slot-arms {
+    top:49%;
     left: 82%;
-    transform: translateX(-50%);
+    transform: translateX(-40%);
 }
 
 /* =========================
@@ -155,15 +158,42 @@
     ======================== */ 
 .character-stats {
     position: absolute;
-    bottom: 5%;
+    bottom: 10px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 0.9em;
-    margin-top: 20px;
-    padding: 10px 20px;
-    background: rgba(0, 0, 0, 0.6);
-    border: 1px solid var(--accent-gold);
+    width: 90%;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.55);
+    border-radius: 10px;
+    backdrop-filter: blur(4px);;
+}
+
+.equipment-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 10px;
+}
+
+.stats-title {
+    margin: 0;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
+    font-size: 0.8rem;
+}
+
+.total-power {
+    margin: 4px 0 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: gold;
     text-align: center;
 }
 
@@ -198,4 +228,64 @@
     cursor: pointer;
      background: linear-gradient(135deg, #d4af37, #f5d76e);
     font-weight: bold;
+}
+
+.rare-slot {
+    border: 2px solid var(--rarity-rare);
+    box-shadow: 0 0 12px var(--rarity-rare);
+}
+
+.legendary-slot {
+    border: 2px solid var(--rarity-legendary);
+    box-shadow: 0 0 18px var(--rarity-legendary);
+}
+
+.rare-aura {
+    animation: rarePulse 2s infinite alternate;
+}
+
+.legendary-aura {
+    animation: legendaryPulse 1.5s infinite alternate;
+}
+
+.sell-inventory-btn {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #e25050, #f02424);
+    font-weight: bold;
+}
+
+#clear-equipment-btn {
+    position: absolute;
+    bottom: 170px;
+    left: 12px;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #e25050, #f02424);
+    font-weight: bold;
+}
+
+@keyframes rarePulse {
+    from {
+        filter: drop-shadow(0 0 8px var(--rarity-rare));
+    }
+    to {
+        filter: drop-shadow(0 0 18px #60a5fa);
+    }
+}
+
+@keyframes legendaryPulse {
+    from {
+        filter: drop-shadow( 0 0 10px var(--rarity-legendary));
+    }
+    to {
+        filter: drop-shadow(0 0 28px #facc15);
+    }
 }
