@@ -1,5 +1,5 @@
 import { showToast } from '../utils/ui.js';
-import { renderUser } from './auth.js';
+import { renderUser, saveUserProgress } from './auth.js';
 import { setupEscClose, setupModalOverlay } from '../utils/ui.js';
 
 // handle DOM variables
@@ -175,7 +175,7 @@ function removeItem(itemName) {
 }
 
 // handle cart checkout logic
-function buyCart() {
+async function buyCart() {
     const user = JSON.parse(localStorage.getItem('nexusUser'));
     const userArea = document.querySelector('#user-area');
     const modal = document.querySelector('#auth-modal');
@@ -222,6 +222,7 @@ function buyCart() {
 
     localStorage.setItem('cart', JSON.stringify(cart));
 
+    await saveUserProgress();
     updateCartCount();
     renderUser(user, userArea, modal);
     renderCart();

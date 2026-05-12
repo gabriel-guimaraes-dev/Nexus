@@ -1,4 +1,50 @@
-import { openModal, closeModal, setupModalOverlay, setupEscClose } from "../utils/ui.js";
+import { openModal, closeModal, setupModalOverlay, setupEscClose, showToast } from "../utils/ui.js";
+
+const API_URL = 'http://localhost:3000/auth';
+
+export async function saveUserProgress() {
+    const user = JSON.parse(localStorage.getItem('nexusUser'));
+    const inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+    const equipment = JSON.parse(localStorage.getItem('equipment')) || {};
+
+    if(!user || !user.id) {
+        console.log('No valid user found');
+        return;
+    }
+
+    console.log({
+        id: user.id,
+        gold: user.gold,
+        inventory,
+        equipment
+    });
+
+    try {
+        await fetch(`${API_URL}/user/save`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: user.id,
+                gold: user.gold,
+                inventory,
+                equipment
+            })
+        });
+        console.log({
+            id: user.id,
+            gold: user.gold,
+            inventory,
+            equipment
+        });
+        showToast('Progress saved!', 'success');
+    } catch (error) {
+        console.error('Save failed:', error);
+        showToast('Save failed', 'error');
+    }
+    
+}
 
 // initialize authentication system
 export function initializeAuth() {
@@ -7,6 +53,7 @@ export function initializeAuth() {
     const loginBtn = document.querySelector('.login-btn');
     const submitBtn = document.querySelector('#auth-submit');
     const usernameInput = document.querySelector('#username-input');
+    const passwordInput = document.querySelector('#password-input');
     const userArea = document.querySelector('#user-area');
     const savedUser = JSON.parse(localStorage.getItem('nexusUser'));
 
@@ -27,23 +74,64 @@ export function initializeAuth() {
     setupEscClose(modal, usernameInput);
     
     // create new user session with starter gold
-    if(submitBtn) {
-        submitBtn.addEventListener('click', () => {
-            const username = usernameInput.value.trim();
+    submitBtn.addEventListener('click', async () => {
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value.trim();
 
-            if (!username) return;
+        if(!username || !password) return;
 
-            const user = {
-                name: username, 
-                gold: 50000
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Loading...';
+
+        try {
+            let response = await fetch(`${API_URL}/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({username, password})
+            });
+
+            if(!response.ok) {
+                const errorData = await response.json();
+
+                if(errorData.error === 'User not Found'){
+                    response = await fetch(`${API_URL}/register`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({username, password})
+                    });
+                } else {
+                    alert(errorData.error);
+                    return;
+                }
+                
+            }
+
+            const user = await response.json();
+
+            const formattedUser = {
+                id: user.id,
+                name: user.username,
+                gold: user.gold
             };
 
-            localStorage.setItem('nexusUser', JSON.stringify(user));
+            localStorage.setItem('nexusUser', JSON.stringify(formattedUser));
+            localStorage.setItem('inventory', JSON.stringify(user.inventory || []));
+            localStorage.setItem('equipment', JSON.stringify(user.equipment || {}));
 
-            renderUser(user, userArea, modal);
+            renderUser(formattedUser, userArea, modal);
             closeModal(modal, usernameInput);
-        });  
-    }
+            window.location.reload();
+        } catch (error) {
+            console.error(error);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Continue';
+        }
+    });
 }
 
 // handle user logout

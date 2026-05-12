@@ -1,5 +1,5 @@
 import { Item } from "../data/items.js";
-import { renderUser } from "./auth.js";
+import { renderUser, saveUserProgress } from "./auth.js";
 import { updateCartCount } from "./cart.js";
 
 // DOM manipulation filters
@@ -115,7 +115,7 @@ function getSlotByItem(item) {
     return slotMap[item.specification];
 }
 
-function equipItem(item) {
+async function equipItem(item) {
     const equipment = JSON.parse(localStorage.getItem('equipment')) || {};
     const slot = getSlotByItem(item);
 
@@ -125,9 +125,10 @@ function equipItem(item) {
 
     localStorage.setItem('equipment', JSON.stringify(equipment));
 
-    window.location.reload();
-    
     renderInventory();
+    await saveUserProgress();
+
+    window.location.reload();
 }
 
 function renderEquipment() {
@@ -270,7 +271,7 @@ function checkFullSetBonus(equipment) {
     return null;
 }
 
-function sellItem(itemData) {
+async function sellItem(itemData) {
     let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
     let user = JSON.parse(localStorage.getItem('nexusUser'));
 
@@ -301,16 +302,18 @@ function sellItem(itemData) {
     localStorage.setItem('inventory', JSON.stringify(inventory));
     localStorage.setItem('nexusUser', JSON.stringify(user));
 
-    window.location.reload();
-
+    await saveUserProgress();
     renderInventory();
     renderEquipment();
     renderUser(user, document.querySelector('#user-area'), document.querySelector('#auth-modal'));
+
+    window.location.reload();
 }
 
-function clearEquipment() {
+async function clearEquipment() {
     localStorage.removeItem('equipment');
     renderEquipment();
+    await saveUserProgress();
 }
 
 function getEquipmentImage(item) {
