@@ -2,48 +2,41 @@ import { openModal, closeModal, setupModalOverlay, setupEscClose, showToast } fr
 
 const API_URL = 'http://localhost:3000/auth';
 
-export async function saveUserProgress() {
-    const user = JSON.parse(localStorage.getItem('nexusUser'));
-    const inventory = JSON.parse(localStorage.getItem('inventory')) || [];
-    const equipment = JSON.parse(localStorage.getItem('equipment')) || {};
+export async function syncUserState() {
+    const token = localStorage.getItem('nexusToken');
 
-    if(!user || !user.id) {
-        console.log('No valid user found');
-        return;
-    }
-
-    console.log({
-        id: user.id,
-        gold: user.gold,
-        inventory,
-        equipment
-    });
+    if(!token) return null;
 
     try {
-        await fetch(`${API_URL}/user/save`, {
-            method: 'POST',
+        const res = await fetch('http://localhost:3000/auth/user/state', {
             headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                id: user.id,
-                gold: user.gold,
-                inventory,
-                equipment
-            })
+                'Authorization': `Bearer ${token}`
+            }
         });
-        console.log({
-            id: user.id,
-            gold: user.gold,
-            inventory,
-            equipment
-        });
-        showToast('Progress saved!', 'success');
-    } catch (error) {
-        console.error('Save failed:', error);
-        showToast('Save failed', 'error');
+
+        if(!res.ok) {
+            console.error('Failed to sync user state');
+            return null;
+        }
+
+        const data = await res.json();
+
+        if(!data) return null;
+
+        localStorage.setItem('nexusUser', JSON.stringify({
+            id: data.id,
+            name: data.username,
+            gold: data.gold
+        }));
+
+        localStorage.setItem('inventory', JSON.stringify(data.inventory));
+        localStorage.setItem('equipment', JSON.stringify(data.equipment));
+
+        return data;
+    } catch (err) {
+        console.error('syncUserState error:', err);
+        return null;
     }
-    
 }
 
 // initialize authentication system
@@ -112,6 +105,8 @@ export function initializeAuth() {
 
             const user = await response.json();
 
+            if(user.token){localStorage.setItem('nexusToken', user.token);}
+
             const formattedUser = {
                 id: user.id,
                 name: user.username,
@@ -137,6 +132,7 @@ export function initializeAuth() {
 // handle user logout
 function logoutUser(userArea, modal) {
     localStorage.removeItem('nexusUser');
+    localStorage.removeItem('nexusToken');
     localStorage.removeItem('inventory');
     localStorage.removeItem('equipment');
     localStorage.removeItem('cart');

@@ -1,6 +1,5 @@
-import { showToast } from '../utils/ui.js';
-import { renderUser, saveUserProgress } from './auth.js';
-import { setupEscClose, setupModalOverlay } from '../utils/ui.js';
+import { renderUser, syncUserState } from './auth.js';
+import { setupEscClose, setupModalOverlay, showToast} from '../utils/ui.js';
 
 // handle DOM variables
 const cartModal = document.querySelector('#cart-modal');
@@ -165,6 +164,8 @@ function decreaseQuantity(itemName){
 
 // remove an item from the cart
 function removeItem(itemName) {
+    let cart = getCart();
+
     cart = cart.filter(item => item.item.name !== itemName);
 
     localStorage.setItem('cart', JSON.stringify(cart));
@@ -191,49 +192,49 @@ async function buyCart() {
         return;
     }
 
-    const total = cart.reduce((sum, cartItem) => {
-        return sum + (cartItem.item.gold * cartItem.quantity);
-    }, 0);
+    try {
+        const token = localStorage.getItem('nexusToken');
 
-    if(user.gold < total) {
-        showToast('Not enough gold', 'error');
-        return;
-    }
+        const response = await fetch('http://localhost:3000/auth/store/buy', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                cart
+            })
+        });
 
-    user.gold -= total;
+        const data = await response.json();
 
-    const inventory = JSON.parse(localStorage.getItem('inventory')) || [];
-
-    cart.forEach(cartEntry => {
-        const existingItem = inventory.find(inventoryItem => inventoryItem.item.name === cartEntry.item.name);
-
-        if(existingItem) {
-            existingItem.quantity += cartEntry.quantity;
-        }else {
-            inventory.push({...cartEntry});
+        if(!response.ok) {
+            showToast(data.error, 'error');
+            return;
         }
-    });
 
-    localStorage.setItem('inventory', JSON.stringify(inventory));
-    localStorage.setItem('nexusUser', JSON.stringify(user));
+        const updatedUser = {
+            id: user.id,
+            name: user.name,
+            gold: data.gold
+        };
 
-    cart = [];
-    saveCart([]);
+        localStorage.setItem('nexusUser', JSON.stringify(updatedUser));
+        localStorage.setItem('inventory', JSON.stringify(data.inventory));
+        localStorage.setItem('cart', JSON.stringify([]));
 
-    localStorage.setItem('cart', JSON.stringify(cart));
+        renderUser(updatedUser, userArea, modal);
+        updateCartCount();
+        renderCart();
+        await syncUserState();
 
-    await saveUserProgress();
-    updateCartCount();
-    renderUser(user, userArea, modal);
-    renderCart();
+        showToast('Purchase successful!', 'success');
 
-    if(cartModal) {
-        cartModal.classList.add('hidden');
+        window.location.reload();
+    }  catch(error) {
+        console.error(error);
+        showToast('Purchase failed', 'error');
     }
-
-    showToast('Purchase successful!', 'success');
-    
-    window.location.reload();
 }
 
 // update cart badge counter

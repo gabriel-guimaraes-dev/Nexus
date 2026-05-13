@@ -1,17 +1,28 @@
+import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import pool from './db.js';
 import authRoutes from './routes/authRoutes.js';
+import inventoryRoutes from './routes/inventoryRoutes.js';
+import storeRoutes from './routes/storeRoutes.js';
 
 dotenv.config();
 
 const app = express();
 
-app.use(cors());
-app.use(express.json());
-app.use('/auth', authRoutes);
+app.use(cors({
+    origin: '*',
+    credentials: true
+}));
 
+app.use(express.json());
+
+//routes
+app.use('/auth', authRoutes);
+app.use('/inventory', inventoryRoutes);
+app.use('/store', storeRoutes);
+
+//test route
 app.get('/', async (req, res) => {
     try {
         const result = await pool.query('SELECT NOW()');
@@ -21,6 +32,8 @@ app.get('/', async (req, res) => {
     }
 });
 
-app.listen(process.env.PORT, () => {
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
     console.log(`Server Running on port ${process.env.PORT}`);
 });

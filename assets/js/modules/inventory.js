@@ -1,5 +1,5 @@
 import { Item } from "../data/items.js";
-import { renderUser, saveUserProgress } from "./auth.js";
+import { renderUser, syncUserState } from "./auth.js";
 import { updateCartCount } from "./cart.js";
 
 // DOM manipulation filters
@@ -116,23 +116,34 @@ function getSlotByItem(item) {
 }
 
 async function equipItem(item) {
-    const equipment = JSON.parse(localStorage.getItem('equipment')) || {};
-    const slot = getSlotByItem(item);
+    const token = localStorage.getItem('nexusToken');
 
-    if(!slot) return;
+    await fetch('http://localhost:3000/inventory/equip', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({itemName: item.name})
+    });
 
-    equipment[slot] = item;
-
-    localStorage.setItem('equipment', JSON.stringify(equipment));
-
+    await syncUserState();
     renderInventory();
-    await saveUserProgress();
+    renderEquipment();
 
     window.location.reload();
 }
 
 function renderEquipment() {
-    const equipment = JSON.parse(localStorage.getItem('equipment')) || {};
+    let equipment = JSON.parse(localStorage.getItem('equipment')) || {};
+
+    if(typeof equipment === 'string'){
+        try {
+            equipment = JSON.parse(equipment);
+        }catch {
+            equipment = {};
+        }
+    }
 
     const allSlots = [
         'head',
@@ -168,6 +179,10 @@ function renderEquipment() {
 function updateStats(equipment) {
     let totalPower = 0;
     const statsContainer = document.querySelector('.character-stats');
+
+    if(typeof equipment !== 'object' || equipment === null){
+        equipment = {};
+    }
 
     Object.values(equipment).forEach(item => {
         if(item) {
@@ -272,48 +287,52 @@ function checkFullSetBonus(equipment) {
 }
 
 async function sellItem(itemData) {
-    let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
     let user = JSON.parse(localStorage.getItem('nexusUser'));
 
     if(!user) return;
 
-    const itemEntry = inventory.find(entry => entry.item.name === itemData.name);
+    try {
+        const token = localStorage.getItem('nexusToken');
 
-    if(!itemEntry) return;
+        const response = await fetch('http://localhost:3000/inventory/sell', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                itemName: itemData.name
+            })
+        });
 
-    user.gold += Math.floor(itemData.gold * 0.6);
+        const data = await response.json();
 
-    itemEntry.quantity--;
+        if(!response.ok) {
+            alert(data.error);
+            return;
+        }
+        
+        const updatedUser = {
+            id: user.id,
+            name: user.name,
+            gold: data.gold
+        };
 
-    if(itemEntry.quantity <=0) {
-        inventory = inventory.filter(entry => entry.item.name !== itemData.name);
+        localStorage.setItem('nexusUser', JSON.stringify(updatedUser));
+        localStorage.setItem('inventory', JSON.stringify(data.inventory));
+        localStorage.setItem('equipment', JSON.stringify(data.equipment));
+
+        await syncUserState();
+
+        window.location.reload();
+    } catch(error) {
+        console.error(error);
     }
-
-    const equipment = JSON.parse(localStorage.getItem('equipment')) || {};
-
-    Object.keys(equipment).forEach(slot => {
-        if(equipment[slot]?.name === itemData.name && !inventory.find(entry => entry.item.name === itemData.name))
-     {
-        delete equipment[slot];
-     }
-    });
-
-    localStorage.setItem('equipment', JSON.stringify(equipment));
-    localStorage.setItem('inventory', JSON.stringify(inventory));
-    localStorage.setItem('nexusUser', JSON.stringify(user));
-
-    await saveUserProgress();
-    renderInventory();
-    renderEquipment();
-    renderUser(user, document.querySelector('#user-area'), document.querySelector('#auth-modal'));
-
-    window.location.reload();
 }
 
 async function clearEquipment() {
     localStorage.removeItem('equipment');
     renderEquipment();
-    await saveUserProgress();
 }
 
 function getEquipmentImage(item) {
