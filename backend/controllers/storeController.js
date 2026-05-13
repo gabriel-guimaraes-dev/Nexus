@@ -12,6 +12,14 @@ export async function buyStoreItem(req, res) {
             return res.status(400).json({error: 'Invalid cart'});
         }
 
+        const validCart = cart.every(
+            entry => entry.item && typeof entry.item.name === 'string' && typeof entry.quantity === 'number'
+        );
+
+        if(!validCart){
+            return res.status(400).json({error: 'Invalid cart data'});
+        }
+
         const result = await pool.query('SELECT * FROM users WHERE id = $1', [userId]);
 
         if(result.rows.length === 0) {
@@ -40,12 +48,14 @@ export async function buyStoreItem(req, res) {
         gold -= totalCost;
 
         cart.forEach(cartEntry => {
-            const existingItem = inventory.find(inv => inv.item.name == cartEntry.item.name);
+            const existingItem = inventory.find(inv => inv.item.name === cartEntry.item.name);
 
             if(existingItem) {
                 existingItem.quantity += cartEntry.quantity;
             } else {
-                inventory.push(cartEntry);
+                inventory.push({
+                    item: cartEntry.item,
+                    quantity: cartEntry.quantity});
             }
         });
 
@@ -58,8 +68,8 @@ export async function buyStoreItem(req, res) {
             gold, JSON.stringify(inventory), userId
         ]);
 
-        res.json({
-            gold, inventory, equipment: safeParse(user.equipment || {})
+        return res.json({
+            gold, inventory, equipment: safeParse(user.equipment, {})
         });
     } catch (error) {
         console.error(error);

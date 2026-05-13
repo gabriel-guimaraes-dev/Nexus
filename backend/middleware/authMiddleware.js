@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'chave_mestra';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 export function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
@@ -9,13 +9,12 @@ export function authenticateToken(req, res, next) {
     if(!token) {
         return res.status(401).json({error: 'Access denied'});
     }
+    try{
+        const decoded = jwt.verify(token, JWT_SECRET);
 
-    jwt.verify(token, JWT_SECRET, (err, user) => {
-        if(err) {
-            return res.status(403).json({error: 'Invalid token'});
-        }
-
-        req.user = user;
+        req.user = decoded;
         next();
-    });
+    }catch (error) {
+        return res.status(403).json({error: 'Invalid token'});
+    }
 }

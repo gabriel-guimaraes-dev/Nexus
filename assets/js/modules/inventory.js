@@ -1,6 +1,8 @@
 import { Item } from "../data/items.js";
 import { renderUser, syncUserState } from "./auth.js";
 import { updateCartCount } from "./cart.js";
+import { inventoryService } from "../services/inventoryService.js";
+import { showToast } from "../utils/ui.js";
 
 // DOM manipulation filters
 const filterSelect = document.querySelector('#filters');
@@ -45,6 +47,16 @@ function renderInventory(items = null) {
     const inventory = items || JSON.parse(localStorage.getItem('inventory')) || [];
 
     inventoryGrid.innerHTML = '';
+
+    if(inventory.length === 0) {
+        inventoryGrid.innerHTML = `
+            <div class="empty-inventory">
+                <h3>Your inventory is empty</h3>
+                <p>Go buy som Legendary gear!</p>
+            </div>
+        `;
+        return;
+    }
 
     // pagination and card render
     const start = (currentPage - 1) * itemsPerPage;
@@ -99,39 +111,21 @@ function renderInventory(items = null) {
     renderInventoryPagination(inventory);
 }
 
-function getSlotByItem(item) {
-    const slotMap = {
-        helmet: 'head',
-        chest: 'chest',
-        leggings: 'legs',
-        shield: 'leftWeapon',
-        sword: 'rightWeapon',
-        spear: 'rightWeapon',
-        bow: 'rightWeapon',
-        dagger: 'rightWeapon',
-        arms: 'arms'
-    };
-
-    return slotMap[item.specification];
-}
-
 async function equipItem(item) {
-    const token = localStorage.getItem('nexusToken');
+    try {
+        await inventoryService.equip(item.name);
 
-    await fetch('http://localhost:3000/inventory/equip', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({itemName: item.name})
-    });
+        await syncUserState();
+        renderInventory();
+        renderEquipment();
 
-    await syncUserState();
-    renderInventory();
-    renderEquipment();
+        showToast(`${item.name} equipped`, 'success');
 
-    window.location.reload();
+        window.location.reload();
+    } catch(error) {
+        console.error(error);
+        showToast(error.message || 'Equip failed', 'error');
+    }
 }
 
 function renderEquipment() {
@@ -190,11 +184,11 @@ function updateStats(equipment) {
         }
     });
 
-    const poweerElement = document.querySelector('#power');
+    const powerElement = document.querySelector('#power');
 
-    if(!poweerElement) return;
+    if(!powerElement) return;
 
-    poweerElement.textContent = totalPower;
+    powerElement.textContent = totalPower;
 
     let equippedStatsHTML = `
         <h3 class="stats-title">Stats</h3>
@@ -272,46 +266,14 @@ function renderInventoryPagination(items) {
     }
 }
 
-function checkFullSetBonus(equipment) {
-    const equippedItems = Object.values(equipment).filter(Boolean);
-
-    if(equippedItems.length< 6) return null;
-
-    const allRare = equippedItems.every(item => item.rarity ==='rare');
-    const allLegendary = equippedItems.every(item => item.rarity === 'legendary');
-
-    if(allLegendary) return 'legendary';
-    if(allRare) return 'rare';
-
-    return null;
-}
-
 async function sellItem(itemData) {
-    let user = JSON.parse(localStorage.getItem('nexusUser'));
+    const user = JSON.parse(localStorage.getItem('nexusUser'));
 
     if(!user) return;
 
     try {
-        const token = localStorage.getItem('nexusToken');
+        const data = await inventoryService.sell(itemData.name);
 
-        const response = await fetch('http://localhost:3000/inventory/sell', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                itemName: itemData.name
-            })
-        });
-
-        const data = await response.json();
-
-        if(!response.ok) {
-            alert(data.error);
-            return;
-        }
-        
         const updatedUser = {
             id: user.id,
             name: user.name,
@@ -319,74 +281,26 @@ async function sellItem(itemData) {
         };
 
         localStorage.setItem('nexusUser', JSON.stringify(updatedUser));
-        localStorage.setItem('inventory', JSON.stringify(data.inventory));
-        localStorage.setItem('equipment', JSON.stringify(data.equipment));
+        localStorage.setItem('inventory', JSON.stringify(data.inventory || []));
+        localStorage.setItem('equipment', JSON.stringify(data.equipment || {}));
+
+        renderUser(updatedUser, document.querySelector('#user-area'), document.querySelector('#auth-modal'));
 
         await syncUserState();
+        renderInventory();
+        renderEquipment();
+
+        showToast(`${itemData.name} sold`, 'success');
 
         window.location.reload();
     } catch(error) {
         console.error(error);
+        showToast(error.message || 'Sell failed', 'error');
     }
 }
 
 async function clearEquipment() {
     localStorage.removeItem('equipment');
     renderEquipment();
-}
-
-function getEquipmentImage(item) {
-    const imageMap = {
-        //helmet
-        "Helmet": "/assets/images/equipped/helmet/rare-helmet.png",
-        "Rare Helmet": "/assets/images/equipped/helmet/rare-helmet.png",
-        "Legendary Helmet": "/assets/images/equipped/helmet/legendary-helmet.png",
-
-        // chest
-        "Chest": "/assets/images/equipped/chest/default-chest.png",
-        "Rare Chest": "/assets/images/equipped/chest/default-chest.png",
-        "Legendary Chest": "/assets/images/equipped/chest/default-chest.png",
-
-        //arms
-        "Arms": "/assets/images/equipped/arms/rare-arms.png",
-        "Rare Arms": "/assets/images/equipped/arms/rare-arms.png",
-        "Legendary Arms": "/assets/images/equipped/arms/rare-arms.png",
-
-        //legs
-        "Leggins": "/assets/images/equipped/legs/default-legs.png",
-        "Rare Leggins": "/assets/images/equipped/legs/default-legs.png",
-        "Legendary Leggins": "/assets/images/equipped/legs/default-legs.png",
-
-        //shield
-        "Shield": "/assets/images/equipped/shield/rare-shield.png",
-        "Rare Shield": "/assets/images/equipped/shield/rare-shield.png",
-        "Legendary Shield": "/assets/images/equipped/shield/legendary-shield.png",
-
-        //bow
-        "Rare Thunder Bow": "/assets/images/equipped/bow/default-frozen-bow.png",
-        "Legendary Thunder Bow": "/assets/images/equipped/bow/default-frozen-bow.png",
-        "Poison Bow": "/assets/images/equipped/bow/default-poison-bow.png",
-        "Rare Poison Bow": "/assets/images/equipped/bow/default-poison-bow.png",
-        "Legendary Poison Bow": "/assets/images/equipped/bow/default-poison-bow.png",
-
-        //dagger
-        "Fire Daggers": "/assets/images/equipped/dagger/default-dagger.png",
-        "Rare Fire Daggers": "/assets/images/equipped/dagger/default-dagger.png",
-        "Legendary Fire Daggers": "/assets/images/equipped/dagger/default-dagger.png",
-
-        //spear
-        "Thunder Spear": "/assets/images/equipped/spear/default-spear.png",   
-        "Rare Thunder Spear": "/assets/images/equipped/spear/default-spear.png", 
-        "Legendary Thunder Spear": "/assets/images/equipped/spear/default-spear.png", 
-
-        //sword
-        "Ice Sword": "/assets/images/equipped/sword/default-frozen-sword.png",
-        "Rare Ice Sword": "/assets/images/equipped/sword/default-frozen-sword.png",
-        "Legendary Ice Sword": "/assets/images/equipped/sword/default-frozen-sword.png",
-        "Rare Poison Sword": "/assets/images/equipped/sword/default-poison-sword.png",
-        "Legendary Poison Sword": "/assets/images/equipped/sword/default-poison-sword.png"
-
-    };
-
-    return imageMap[item.name] || null;
+    showToast('Equipment cleared', 'info');
 }

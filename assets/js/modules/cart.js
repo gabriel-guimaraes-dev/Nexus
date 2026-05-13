@@ -1,5 +1,8 @@
 import { renderUser, syncUserState } from './auth.js';
 import { setupEscClose, setupModalOverlay, showToast} from '../utils/ui.js';
+import { inventoryService } from "../services/inventoryService.js";
+import { authService } from '../services/authService.js';
+import {storeService} from '../services/storeService.js';
 
 // handle DOM variables
 const cartModal = document.querySelector('#cart-modal');
@@ -192,26 +195,11 @@ async function buyCart() {
         return;
     }
 
+    buyCartBtn.disabled = true;
+    buyCartBtn.textContent = 'Processing...';
+
     try {
-        const token = localStorage.getItem('nexusToken');
-
-        const response = await fetch('http://localhost:3000/auth/store/buy', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                cart
-            })
-        });
-
-        const data = await response.json();
-
-        if(!response.ok) {
-            showToast(data.error, 'error');
-            return;
-        }
+        const data = await storeService.buy(cart);
 
         const updatedUser = {
             id: user.id,
@@ -220,7 +208,8 @@ async function buyCart() {
         };
 
         localStorage.setItem('nexusUser', JSON.stringify(updatedUser));
-        localStorage.setItem('inventory', JSON.stringify(data.inventory));
+        localStorage.setItem('inventory', JSON.stringify(data.inventory || []));
+        localStorage.setItem('equipment', JSON.stringify(data.equipment || []));
         localStorage.setItem('cart', JSON.stringify([]));
 
         renderUser(updatedUser, userArea, modal);
@@ -233,7 +222,10 @@ async function buyCart() {
         window.location.reload();
     }  catch(error) {
         console.error(error);
-        showToast('Purchase failed', 'error');
+        showToast(error.message || 'Purchase failed', 'error');
+    } finally {
+        buyCartBtn.disabled = false;
+        buyCartBtn.textContent = 'Buy';
     }
 }
 

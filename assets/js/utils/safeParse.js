@@ -1,6 +1,6 @@
 export function safeParse(data, fallback) {
     try {
-        if (typeof data === 'string') {
+        if(typeof data === 'string') {
             return JSON.parse(data);
         }
 

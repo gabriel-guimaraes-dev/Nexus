@@ -75,8 +75,8 @@ export async function sellItem(req, res) {
         }
 
         const user = result.rows[0];
-        let inventory = user.inventory || [];
-        let equipment = user.equipment || {};
+        let inventory = safeParse(user.inventory, []);
+        let equipment = safeParse(user.equipment, {});
         let gold = user.gold;
 
         const itemEntry = inventory.find(entry => entry.item.name === itemName);
@@ -95,7 +95,7 @@ export async function sellItem(req, res) {
             inventory = inventory.filter(entry => entry.item.name !== itemName);
 
             Object.keys(equipment).forEach(slot => {
-                if (equipment[slot] && equipment[slot].name === itemName) {
+                if (equipment[slot]?.name === itemName) {
                     delete equipment[slot];
                 }
             });

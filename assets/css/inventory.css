@@ -272,6 +272,30 @@
     font-weight: bold;
 }
 
+.empty-inventory {
+    grid-column: 1/ -1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+    margin-top: 90px;
+}
+
+.empty-inventory h3 {
+    font-size: 1.8rem;
+    color: var(--accent-gold);
+    margin-bottom: 12px;
+    font-weight: 700;
+}
+.empty-inventory p {
+    font-size: 1rem;
+    color: #b8b8c7;
+    max-width: 300px;
+    line-height: 1.5;
+}
+
 @keyframes rarePulse {
     from {
         filter: drop-shadow(0 0 8px var(--rarity-rare));
