@@ -6,11 +6,18 @@ import { initializeInventory } from './modules/inventory.js';
 // initialize user authentication
 initializeAuth();
 
-const currentPage = window.location.pathname;
+const getPath = () => {
+    try{
+        return window.location.pathname || '';
+    }catch (e) {
+        return '';
+    }
+};
 
-// detect current page and load corresponding features
-if (currentPage.includes('store.html')) {
+const path = getPath().toLowerCase();
+
+if(path.includes('store')){
     initializeStore();
-} else if (currentPage.includes('inventory.html')) {
+} else if(path.includes('inventory')) {
     initializeInventory();
 }

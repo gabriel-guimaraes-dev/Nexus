@@ -40,11 +40,11 @@ export function initializeInventory() {
 // render inventory cards with equip button and quantity
 function renderInventory(items = null) {
     const inventoryGrid = document.querySelector('.inventory-grid');
-    
 
     if(!inventoryGrid) return;
 
-    const inventory = items || JSON.parse(localStorage.getItem('inventory')) || [];
+    const rawInventory = items || JSON.parse(localStorage.getItem('inventory'));
+    const inventory = Array.isArray(rawInventory) ? rawInventory : [];
 
     inventoryGrid.innerHTML = '';
 

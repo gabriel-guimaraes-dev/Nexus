@@ -59,17 +59,24 @@ export async function buyStoreItem(req, res) {
             }
         });
 
+        const updatedGold = Number(gold);
+        const inventoryData = JSON.stringify(inventory || []);
+
         await pool.query(`
             UPDATE users
             SET gold = $1,
-                inventory = $2
+                inventory = $2::jsonb
             WHERE id = $3
             `, [
-            gold, JSON.stringify(inventory), userId
+            updatedGold, inventoryData, userId
         ]);
 
+        const equipmentData = safeParse(user.equipment, {});
+
         return res.json({
-            gold, inventory, equipment: safeParse(user.equipment, {})
+            gold :updatedGold,
+            inventory: inventory || [],
+            equipment: equipmentData
         });
     } catch (error) {
         console.error(error);
