@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000';
+const API_URL = 'https://nexus-p33c.onrender.com';
 
 function getToken() {
     return localStorage.getItem('nexusToken');
