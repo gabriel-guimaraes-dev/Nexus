@@ -103,9 +103,9 @@ CREATE TABLE public.users (
     id integer NOT NULL,
     username character varying(50) NOT NULL,
     password character varying(255) NOT NULL,
-    gold integer DEFAULT 3000,
+    gold integer DEFAULT 10000,
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    inventory jsonb DEFAULT '{}'::jsonb,
+    inventory jsonb DEFAULT '[]'::jsonb,
     equipment jsonb DEFAULT '{}'::jsonb
 );
 
@@ -176,9 +176,9 @@ COPY public.inventory (id, user_id, item_name, quantity) FROM stdin;
 --
 
 COPY public.users (id, username, password, gold, created_at, inventory, equipment) FROM stdin;
-2	Sh3tss	$2b$10$769xZgRbHIJgloMMeppSI.1mYvOBL/qeQS2x0TYoN7dVowjBcwv06	3000	2026-05-12 15:19:59.914545	{}	{}
+2	Sh3tss	$2b$10$769xZgRbHIJgloMMeppSI.1mYvOBL/qeQS2x0TYoN7dVowjBcwv06	10000	2026-05-12 15:19:59.914545	{}	{}
 1	gabriel	$2b$10$.EQ3jaBakrTAP6hBvZ7im.tv4x0adUTelmDrwgHUbj/8Cu8yGQgZi	409	2026-05-12 14:51:08.29891	[]	{}
-3	teste	$2b$10$qFaHUUpeS42mJYcxrtEDKuXDUyR35n21ut7J6Y8JBulHCEeLBS6w6	3000	2026-05-13 14:44:42.114024	{}	{}
+3	teste	$2b$10$qFaHUUpeS42mJYcxrtEDKuXDUyR35n21ut7J6Y8JBulHCEeLBS6w6	10000	2026-05-13 14:44:42.114024	{}	{}
 \.
 
 
