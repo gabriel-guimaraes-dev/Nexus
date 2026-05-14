@@ -1,5 +1,6 @@
 import { renderUser, syncUserState } from './auth.js';
 import { setupEscClose, setupModalOverlay, showToast} from '../utils/ui.js';
+import {renderInventory} from './inventory.js';
 import { inventoryService } from "../services/inventoryService.js";
 import { authService } from '../services/authService.js';
 import {storeService} from '../services/storeService.js';
@@ -178,8 +179,21 @@ function removeItem(itemName) {
     showToast('Item removed from cart', 'info');
 }
 
+let isBuying = false;
+
+if(buyCartBtn) {
+    buyCartBtn.removeEventListener('click', handleBuyClick);
+    buyCartBtn.addEventListener('click', handleBuyClick);
+}
+
+async function handleBuyClick() {
+    await buyCart();
+}
+
 // handle cart checkout logic
 async function buyCart() {
+    if(isBuying) return; 
+
     const user = JSON.parse(localStorage.getItem('nexusUser'));
     const userArea = document.querySelector('#user-area');
     const modal = document.querySelector('#auth-modal');
@@ -195,6 +209,7 @@ async function buyCart() {
         return;
     }
 
+    isBuying = true;
     buyCartBtn.disabled = true;
     buyCartBtn.textContent = 'Processing...';
 
@@ -209,21 +224,28 @@ async function buyCart() {
 
         localStorage.setItem('nexusUser', JSON.stringify(updatedUser));
         localStorage.setItem('inventory', JSON.stringify(data.inventory || []));
-        localStorage.setItem('equipment', JSON.stringify(data.equipment || []));
+        localStorage.setItem('equipment', JSON.stringify(data.equipment || {}));
         localStorage.setItem('cart', JSON.stringify([]));
 
         renderUser(updatedUser, userArea, modal);
         updateCartCount();
         renderCart();
-        await syncUserState();
+
+        const freshData = await syncUserState();
+
+        if(freshData) {
+            renderInventory(freshData.inventory);
+            renderEquipment(freshData.equipment);
+        }
+
+        if(cartModal) cartModal.classList.add('hidden');
 
         showToast('Purchase successful!', 'success');
-
-        window.location.reload();
     }  catch(error) {
         console.error(error);
         showToast(error.message || 'Purchase failed', 'error');
     } finally {
+        isBuying = false;
         buyCartBtn.disabled = false;
         buyCartBtn.textContent = 'Buy';
     }

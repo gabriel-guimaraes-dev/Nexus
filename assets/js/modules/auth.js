@@ -1,5 +1,12 @@
 import { openModal, closeModal, setupModalOverlay, setupEscClose, showToast } from "../utils/ui.js";
 import { authService } from '../services/authService.js';
+import { initializeInventory } from "./inventory.js";
+
+
+const getUserElements = () => ({
+    userArea: document.querySelector('#user-area'),
+    modal: document.querySelector('#auth-modal')
+});
 
 // sync user state
 export async function syncUserState() {
@@ -11,14 +18,25 @@ export async function syncUserState() {
 
         if (!data) return null;
 
+
+        const formattedUser = {
+            id: data.id,
+            name: data.username,
+            gold: data.gold
+        };
+
         localStorage.setItem('nexusUser', JSON.stringify({
             id: data.id,
             name: data.username,
             gold: data.gold
         }));
 
+        localStorage.setItem('nexusUser', JSON.stringify(formattedUser));
         localStorage.setItem('inventory', JSON.stringify(data.inventory || []));
         localStorage.setItem('equipment', JSON.stringify(data.equipment || {}));
+
+        const {userArea, modal} = getUserElements();
+        if(userArea) renderUser(formattedUser, userArea, modal);
 
         return data;
     } catch (err) {
@@ -29,12 +47,11 @@ export async function syncUserState() {
 
 // initialize auth system
 export function initializeAuth() {
-    const modal = document.querySelector('#auth-modal');
+    const {userArea, modal} = getUserElements();
     const loginBtn = document.querySelector('.login-btn');
     const submitBtn = document.querySelector('#auth-submit');
     const usernameInput = document.querySelector('#username-input');
     const passwordInput = document.querySelector('#password-input');
-    const userArea = document.querySelector('#user-area');
     const closeBtn = document.querySelector('#close-modal');
 
     const savedUser = JSON.parse(localStorage.getItem('nexusUser'));
@@ -103,11 +120,10 @@ export function initializeAuth() {
             renderUser(formattedUser, userArea, modal);
             closeModal(modal, usernameInput);
 
-            showToast('Login successful!', 'success');
+            showToast('Login successful!', 'success');        
 
-            setTimeout(() => {
-                window.location.reload();
-            }, 700);
+            
+            initializeInventory();
 
         } catch (error) {
             console.error(error);
@@ -143,6 +159,9 @@ export function renderUser(user, userArea, modal) {
         <button id="logout-btn">Logout</button>
     `;
 
-    document.querySelector('#logout-btn')
-        .addEventListener('click', () => logoutUser(userArea, modal));
+    const logoutBtn = document.querySelector('#logout-btn');
+
+    if(logoutBtn) {
+        logoutBtn.addEventListener('click', () => logoutUser(userArea, modal));
+    }
 }

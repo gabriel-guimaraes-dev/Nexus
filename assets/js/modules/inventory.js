@@ -38,7 +38,7 @@ export function initializeInventory() {
 }
 
 // render inventory cards with equip button and quantity
-function renderInventory(items = null) {
+export function renderInventory(items = null) {
     const inventoryGrid = document.querySelector('.inventory-grid');
 
     if(!inventoryGrid) return;
@@ -115,21 +115,22 @@ async function equipItem(item) {
     try {
         await inventoryService.equip(item.name);
 
-        await syncUserState();
-        renderInventory();
-        renderEquipment();
+        const freshData = await syncUserState();
+
+        if(freshData) {
+            renderInventory(freshData.inventory);
+            renderEquipment(freshData.equipment);
+        }
 
         showToast(`${item.name} equipped`, 'success');
-
-        window.location.reload();
     } catch(error) {
         console.error(error);
         showToast(error.message || 'Equip failed', 'error');
     }
 }
 
-function renderEquipment() {
-    let equipment = JSON.parse(localStorage.getItem('equipment')) || {};
+function renderEquipment(providedEquipment = null) {
+    let equipment = providedEquipment || JSON.parse(localStorage.getItem('equipment')) || {};
 
     if(typeof equipment === 'string'){
         try {
@@ -173,22 +174,23 @@ function renderEquipment() {
 function updateStats(equipment) {
     let totalPower = 0;
     const statsContainer = document.querySelector('.character-stats');
+    const powerElement = document.querySelector('#power');
 
     if(typeof equipment !== 'object' || equipment === null){
         equipment = {};
     }
 
     Object.values(equipment).forEach(item => {
-        if(item) {
+        if(item && item.power) {
             totalPower += item.power;
         }
     });
 
-    const powerElement = document.querySelector('#power');
+    if(powerElement) {
+        powerElement.textContent = totalPower;
+    }
 
-    if(!powerElement) return;
-
-    powerElement.textContent = totalPower;
+    if(!statsContainer) return;
 
     let equippedStatsHTML = `
         <h3 class="stats-title">Stats</h3>
@@ -200,13 +202,14 @@ function updateStats(equipment) {
         if(item) {
             equippedStatsHTML += `
                 <div class="stat-item">
-                    <span>${slotNames[slot]}</span>
+                    <span>${slotNames[slot] || slot}</span>
                     <span>+${item.power}</span>
                 </div>
             `;
         }
     });
 
+    equippedStatsHTML += `</div>`;
     statsContainer.innerHTML = equippedStatsHTML;
 }
 
@@ -287,12 +290,10 @@ async function sellItem(itemData) {
         renderUser(updatedUser, document.querySelector('#user-area'), document.querySelector('#auth-modal'));
 
         await syncUserState();
-        renderInventory();
+        renderInventory(data.inventory);
         renderEquipment();
 
         showToast(`${itemData.name} sold`, 'success');
-
-        window.location.reload();
     } catch(error) {
         console.error(error);
         showToast(error.message || 'Sell failed', 'error');
