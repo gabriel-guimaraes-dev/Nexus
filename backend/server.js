@@ -11,7 +11,8 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-    origin: ['https://verdant-faun-14056a.netlify.app'],
+    origin: ['https://verdant-faun-14056a.netlify.app', 'http://localhost:5500', // para seus testes locais
+  'http://127.0.0.1:5500'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
