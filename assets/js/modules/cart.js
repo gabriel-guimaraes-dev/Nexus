@@ -1,6 +1,6 @@
 import { renderUser, syncUserState } from './auth.js';
 import { setupEscClose, setupModalOverlay, showToast} from '../utils/ui.js';
-import {renderInventory} from './inventory.js';
+import {renderInventory, renderEquipment} from './inventory.js';
 import { inventoryService } from "../services/inventoryService.js";
 import { authService } from '../services/authService.js';
 import {storeService} from '../services/storeService.js';
@@ -11,23 +11,28 @@ const closeCart = document.querySelector('#close-cart');
 const cartIcon = document.querySelector('.cart');
 const buyCartBtn = document.querySelector('#buy-cart-btn');
 const clearCartBtn = document.querySelector('#clear-cart-btn');
+let isBuying = false;
 
-setupModalOverlay(cartModal);
-setupEscClose(cartModal);
+export function initializeCart() {
+    if(buyCartBtn) {
+        buyCartBtn.onclick = async () => { await buyCart();};
+    } 
 
-// clear and buy events
-if(clearCartBtn) clearCartBtn.addEventListener('click', clearCart);
+    if(clearCartBtn) {
+        clearCartBtn.onclick = clearCart;
+    }
 
-if (buyCartBtn) buyCartBtn.addEventListener('click', buyCart);
+    if(closeCart) {
+        closeCart.onclick = () => cartModal.classList.add('hidden');
+    }
 
-if(closeCart) {
-    closeCart.addEventListener('click', () => {
-        cartModal.classList.add('hidden');
-    });
-}
-
-if(cartIcon) {
-    cartIcon.addEventListener('click', openCart);
+    if(cartIcon) {
+        cartIcon.onclick = openCart;
+    }
+    if(cartModal) {
+        setupModalOverlay(cartModal);
+        setupEscClose(cartModal);
+    }
 }
 
 function openCart() {
@@ -54,8 +59,6 @@ export function addToCart(item) {
 
     saveCart(cart);
     updateCartCount();
-
-    localStorage.setItem('cart', JSON.stringify(cart));
 
     if(cartModal && !cartModal.classList.contains('hidden')) {
         renderCart();
@@ -139,8 +142,6 @@ function increaseQuantity (itemName) {
     cartItem.quantity++;
 
     saveCart(cart);
-
-    localStorage.setItem('cart', JSON.stringify(cart));
     renderCart();
     updateCartCount();
 }
@@ -160,8 +161,6 @@ function decreaseQuantity(itemName){
     }
 
     saveCart(cart);
-
-    localStorage.setItem('cart', JSON.stringify(cart));
     renderCart();
     updateCartCount();
 }
@@ -172,18 +171,11 @@ function removeItem(itemName) {
 
     cart = cart.filter(item => item.item.name !== itemName);
 
-    localStorage.setItem('cart', JSON.stringify(cart));
+    saveCart(cart);
     renderCart();
     updateCartCount();
 
     showToast('Item removed from cart', 'info');
-}
-
-let isBuying = false;
-
-if(buyCartBtn) {
-    buyCartBtn.removeEventListener('click', handleBuyClick);
-    buyCartBtn.addEventListener('click', handleBuyClick);
 }
 
 async function handleBuyClick() {
@@ -194,9 +186,6 @@ async function handleBuyClick() {
 async function buyCart() {
     if(isBuying) return; 
 
-    const user = JSON.parse(localStorage.getItem('nexusUser'));
-    const userArea = document.querySelector('#user-area');
-    const modal = document.querySelector('#auth-modal');
     let cart = getCart();
 
     if(cart.length === 0){
@@ -204,42 +193,41 @@ async function buyCart() {
         return;
     }
 
+    isBuying = true;
+    buyCartBtn.disabled = true;
+    buyCartBtn.textContent = 'Processing...';
+
+    const user = JSON.parse(localStorage.getItem('nexusUser'));
+    const userArea = document.querySelector('#user-area');
+    const modal = document.querySelector('#auth-modal');
+
     if (!user) {
         showToast('You need to login first', 'error');
         return;
     }
 
-    isBuying = true;
-    buyCartBtn.disabled = true;
-    buyCartBtn.textContent = 'Processing...';
-
     try {
         const data = await storeService.buy(cart);
 
-        const updatedUser = {
-            id: user.id,
-            name: user.name,
-            gold: data.gold
-        };
-
-        localStorage.setItem('nexusUser', JSON.stringify(updatedUser));
-        localStorage.setItem('inventory', JSON.stringify(data.inventory || []));
-        localStorage.setItem('equipment', JSON.stringify(data.equipment || {}));
         localStorage.setItem('cart', JSON.stringify([]));
-
-        renderUser(updatedUser, userArea, modal);
-        updateCartCount();
-        renderCart();
 
         const freshData = await syncUserState();
 
         if(freshData) {
+            renderUser({
+                id: freshData.id,
+                name: freshData.username,
+                gold: freshData.gold
+            }, userArea, modal);
+
             renderInventory(freshData.inventory);
             renderEquipment(freshData.equipment);
         }
 
-        if(cartModal) cartModal.classList.add('hidden');
+        updateCartCount();
+        renderCart();
 
+        if(cartModal) cartModal.classList.add('hidden');
         showToast('Purchase successful!', 'success');
     }  catch(error) {
         console.error(error);
@@ -268,19 +256,12 @@ export function updateCartCount() {
 
 // remove all items from the cart
 function clearCart() {
-    let cart = getCart();
-
-    cart = [];
-
-    localStorage.setItem('cart', JSON.stringify(cart));
-
+    saveCart([]);
     renderCart();
     updateCartCount();
-    
-    if(cartModal) {
-        cartModal.classList.add('hidden');
-    }
 
+    if(cartModal) cartModal.classList.add('hidden');
+    
     showToast('Cart Cleared', 'info');
 }
 

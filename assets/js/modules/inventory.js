@@ -129,7 +129,7 @@ async function equipItem(item) {
     }
 }
 
-function renderEquipment(providedEquipment = null) {
+export function renderEquipment(providedEquipment = null) {
     let equipment = providedEquipment || JSON.parse(localStorage.getItem('equipment')) || {};
 
     if(typeof equipment === 'string'){
