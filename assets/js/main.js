@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // initialize user authentication
     initializeAuth();
 
+    initializeCart();
+
     const path = window.location.pathname.toLowerCase();
 
     if(path.includes('store')){

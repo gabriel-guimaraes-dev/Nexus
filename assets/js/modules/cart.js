@@ -14,24 +14,35 @@ const clearCartBtn = document.querySelector('#clear-cart-btn');
 let isBuying = false;
 
 export function initializeCart() {
-    if(buyCartBtn) {
-        buyCartBtn.onclick = async () => { await buyCart();};
-    } 
+    const icon = document.querySelector('.cart');
+    const modal = document.querySelector('#cart-modal');
+    const btnBuy = document.querySelector('#buy-cart-btn');
+    const btnClose = document.querySelector('#close-cart');
+    const btnClear = document.querySelector('#clear-cart-btn');
 
-    if(clearCartBtn) {
-        clearCartBtn.onclick = clearCart;
+    if (icon) {
+        icon.onclick = () => {
+            openCart();
+        };
     }
 
-    if(closeCart) {
-        closeCart.onclick = () => cartModal.classList.add('hidden');
+    if (btnClose) {
+        btnClose.onclick = () => modal.classList.add('hidden');
     }
 
-    if(cartIcon) {
-        cartIcon.onclick = openCart;
+    if (btnBuy) {
+        btnBuy.onclick = async () => { 
+            await buyCart(); 
+        };
     }
-    if(cartModal) {
-        setupModalOverlay(cartModal);
-        setupEscClose(cartModal);
+
+    if (btnClear) {
+        btnClear.onclick = clearCart;
+    }
+    
+    if (modal) {
+        setupModalOverlay(modal);
+        setupEscClose(modal);
     }
 }
 
